@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PrivChain Frontend</title>
+</head>
+<body>
+    <h1>PrivChain Local Test</h1>
+
+    <h2>Store Record</h2>
+    <input type="text" id="recordData" placeholder="Enter data">
+    <button onclick="storeRecord()">Store Record</button>
+
+    <h2>Get Record</h2>
+    <input type="number" id="recordIndex" placeholder="Enter index">
+    <button onclick="getRecord()">Get Record</button>
+    <div id="recordOutput"></div>
+
+    <h2>Record Count</h2>
+    <button onclick="getRecordCount()">Get Count</button>
+    <div id="countOutput"></div>
+
+    <h2>Transfer ETH</h2>
+    <input type="text" id="toAddress" placeholder="Recipient Address">
+    <input type="text" id="amount" placeholder="Amount in ETH">
+    <button onclick="transferETH()">Send ETH</button>
+    <div id="transferOutput"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>

@@ -1,31 +1,119 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <title>PrivChain Frontend</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>PrivChain — Local UI</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+        /* small inline fallback for fonts */
+        :root {
+            --accent: #00d1b2;
+            --accent-2: #7efc6d;
+            --bg1: #071029;
+            --bg2: #0b1630
+        }
+    </style>
 </head>
+
 <body>
-    <h1>PrivChain Local Test</h1>
+    <div class="app">
+        <header class="topbar">
+            <div class="brand">
+                <svg class="logo" viewBox="0 0 48 48" aria-hidden="true">
+                    <defs></defs>
+                    <rect x="4" y="10" width="40" height="28" rx="4" fill="none" stroke="url(#g)" stroke-width="2">
+                    </rect>
+                    <g stroke="none" fill="currentColor" fill-opacity="0.85">
+                        <path d="M8 34h32v2H8z" fill="#0b2238"></path>
+                    </g>
+                </svg>
+                <div>
+                    <div class="title">PrivChain</div>
+                    <div class="subtitle">Local Testnet UI</div>
+                </div>
+            </div>
+            <div class="controls">
+                <div class="network-pill">Network: <strong>PrivateChain</strong></div>
+                <button id="connectBtn" class="btn ghost">Connect Wallet</button>
+            </div>
+        </header>
 
-    <h2>Store Record</h2>
-    <input type="text" id="recordData" placeholder="Enter data">
-    <button onclick="storeRecord()">Store Record</button>
+        <main class="grid">
+            <section class="card card--glass">
+                <h3>Store Record</h3>
+                <input type="text" id="recordData" placeholder="Enter data" />
+                <button class="btn" onclick="storeRecord()">Store Record</button>
+            </section>
 
-    <h2>Get Record</h2>
-    <input type="number" id="recordIndex" placeholder="Enter index">
-    <button onclick="getRecord()">Get Record</button>
-    <div id="recordOutput"></div>
+            <section class="card card--glass">
+                <h3>Get Record</h3>
+                <input type="number" id="recordIndex" placeholder="Enter index" />
+                <button class="btn" onclick="getRecord()">Get Record</button>
+                <div id="recordOutput" class="output"></div>
+            </section>
 
-    <h2>Record Count</h2>
-    <button onclick="getRecordCount()">Get Count</button>
-    <div id="countOutput"></div>
+            <section class="card card--glass">
+                <h3>Record Count</h3>
+                <button class="btn" onclick="getRecordCount()">Get Count</button>
+                <div id="countOutput" class="output"></div>
+            </section>
 
-    <h2>Transfer ETH</h2>
-    <input type="text" id="toAddress" placeholder="Recipient Address">
-    <input type="text" id="amount" placeholder="Amount in ETH">
-    <button onclick="transferETH()">Send ETH</button>
-    <div id="transferOutput"></div>
+            <section class="card card--glass">
+                <h3>Transfer ETH</h3>
+                <input type="text" id="toAddress" placeholder="Recipient Address" />
+                <input type="text" id="amount" placeholder="Amount in ETH" />
+                <button class="btn" onclick="transferETH()">Send ETH</button>
+                <div id="transferOutput" class="output"></div>
+            </section>
+
+            <aside class="card activity">
+                <h3>Activity Feed</h3>
+                <div id="activityLog" class="activity-log"></div>
+            </aside>
+        </main>
+
+        <footer class="footer">
+            <div id="status">Status: <span class="status-dot online"></span> Connected (local)</div>
+            <div class="credits">Built for local PrivateChain testing</div>
+        </footer>
+    </div>
 
     <script src="app.js"></script>
+    <script>
+        (function () {
+            function addActivity(text) {
+                const log = document.getElementById('activityLog');
+                if (!log) return;
+                const el = document.createElement('div');
+                el.className = 'activity-item';
+                const time = new Date().toLocaleTimeString();
+                el.innerHTML = '<span class="ts">' + time + '</span>' + '<span class="msg">' + text + '</span>';
+                log.prepend(el);
+            }
+
+            function wrap(name) {
+                const orig = window[name];
+                window[name] = function () {
+                    addActivity(name + ' invoked');
+                    try { if (orig) return orig.apply(this, arguments); } catch (e) { addActivity(name + ' error: ' + e.message); throw e; }
+                };
+            }
+
+            // wrap known functions if they exist (app.js defines them)
+            ['storeRecord', 'getRecord', 'getRecordCount', 'transferETH'].forEach(wrap);
+
+            // nice connect button micro-interaction
+            const connectBtn = document.getElementById('connectBtn');
+            connectBtn && connectBtn.addEventListener('click', function () {
+                const s = document.getElementById('status');
+                addActivity('Connect wallet (UI only)');
+                connectBtn.classList.add('active');
+                setTimeout(() => { addActivity('Wallet connected (simulated)'); if (s) s.classList.add('connected'); }, 700);
+            });
+        })();
+    </script>
 </body>
+
 </html>
